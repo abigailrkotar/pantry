@@ -1,7 +1,7 @@
 'use client'
 import {Box, Stack, Typography, Button, Modal, TextField} from '@mui/material'
 import {firestore} from '@/firebase'
-import {collection, getDocs, query, doc, setDoc} from 'firebase/firestore';
+import {collection, getDocs, query, doc, setDoc, deleteDoc} from 'firebase/firestore';
 import {useEffect, useState} from 'react'
 
 
@@ -46,6 +46,12 @@ export default function Home() {
     await setDoc(docRef, {})
     updatePantry()
   }
+
+  const removeItem = async (item) => {
+    const docRef = doc(collection(firestore, 'pantry'), item)
+    await deleteDoc(docRef)
+    updatePantry()
+  }
   return (
     <Box 
       width="100vw" 
@@ -56,6 +62,7 @@ export default function Home() {
       alignItems={"center"}
       gap={2}
     >
+    
     <Button variant="contained" onClick={handleOpen}>Add</Button>
     <Modal
         open={open}
@@ -80,7 +87,8 @@ export default function Home() {
         </Stack>
         
           </Box>
-      </Modal>  
+      </Modal> 
+      
     <Box border={'1px solid #333'}>
     
     
@@ -93,6 +101,7 @@ export default function Home() {
       <Stack width="800px" height="300px" spacing={2} overflow={'auto'}>
 
         {pantry.map((i) => (
+        <Stack key = {i} direction={'row'} spacing={2} justifyContent={'center'} paddingX={2}alignItems={'space-between'}>
           <Box
             key={i}
             width="100%"
@@ -112,6 +121,11 @@ export default function Home() {
               </Typography>
               
             </Box>
+            <Button variant="contained" onClick={() => 
+              removeItem(i)
+            }>Delete</Button>
+   
+          </Stack>
         ))}
       </Stack>
       </Box>
