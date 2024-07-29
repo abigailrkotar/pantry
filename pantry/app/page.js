@@ -1,7 +1,7 @@
 'use client'
 import {Box, Stack, Typography, Button, Modal, TextField} from '@mui/material'
 import {firestore} from '@/firebase'
-import {collection, getDocs, query} from 'firebase/firestore';
+import {collection, getDocs, query, doc, setDoc} from 'firebase/firestore';
 import {useEffect, useState} from 'react'
 
 
@@ -25,24 +25,26 @@ export default function Home() {
     p: 4,
   };
 
+  const updatePantry = async () => {
+
+    const snapshot = query(collection(firestore, 'pantry'))
+    const docs = await getDocs(snapshot)
+    const pantryList = []
+    docs.forEach((doc) => {
+      pantryList.push(doc.id)
+    })
+    console.log(pantryList)
+    setPantry(pantryList)
+  }
 
   useEffect(() => {
-    const updatePantry = async () => {
-
-      const snapshot = query(collection(firestore, 'pantry'))
-      const docs = await getDocs(snapshot)
-      const pantryList = []
-      docs.forEach((doc) => {
-        pantryList.push(doc.id)
-      })
-      console.log(pantryList)
-      setPantry(pantryList)
-    }
     updatePantry()
   }, [])
 
-  const addItem = (item) => {
-    console.log(item)
+  const addItem = async (item) => {
+    const docRef = doc(collection(firestore, 'pantry'), item)
+    await setDoc(docRef, {})
+    updatePantry()
   }
   return (
     <Box 
