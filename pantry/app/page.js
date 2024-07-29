@@ -1,5 +1,8 @@
+'use client'
 import {Box, Stack, Typography} from '@mui/material'
-
+import {firestore} from '@/firebase'
+import {collection, getDocs, query} from 'firebase/firestore';
+import {useEffect} from 'react'
 const item = [
   'tomato',
   'potato',
@@ -15,6 +18,17 @@ const item = [
 ]
 
 export default function Home() {
+  useEffect(() => {
+    const updatePantry = async () => {
+
+      const snapshot = query(collection(firestore, 'pantry'))
+      const docs = await getDocs(snapshot)
+      docs.forEach((doc) => {
+        console.log(doc.id, doc.data())
+      })
+    }
+    updatePantry()
+  }, [])
   return (
     <Box 
       width="100vw" 
@@ -24,9 +38,15 @@ export default function Home() {
       justifyContent={"center"}
       alignItems={"center"}
     >
-    <Box width="800px" height="100px" bgcolor={'lightblue'} border={'1px solid #333'}
-    ><Typography variant={'h2'} color={'#333'} textAlign={'center'}>
-      Pantry Items</Typography></Box>
+    <Box border={'1px solid #333'}>
+
+    
+    <Box width="800px" height="100px" bgcolor={'lightblue'} 
+    >
+      <Typography variant={'h2'} color={'#333'} textAlign={'center'}>
+        Pantry Items
+      </Typography>
+    </Box>
       <Stack width="800px" height="300px" spacing={2} overflow={'auto'}>
 
         {item.map((i) => (
@@ -51,6 +71,7 @@ export default function Home() {
             </Box>
         ))}
       </Stack>
+      </Box>
     </Box>
   );
 }
