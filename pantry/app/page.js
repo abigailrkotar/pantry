@@ -1,8 +1,10 @@
 'use client'
-import {Box, Stack, Typography, Button, Modal, TextField} from '@mui/material'
+import {Box, Stack, Typography, Button, Modal, TextField, Listbox} from '@mui/material'
 import {firestore} from '@/firebase'
-import {collection, getDocs, query, doc, setDoc, deleteDoc, getDoc} from 'firebase/firestore';
+import {collection, getDocs, query, doc, setDoc, deleteDoc, getDoc} from 'firebase/firestore'
 import {useEffect, useState} from 'react'
+import Autocomplete from '@mui/material/Autocomplete';
+
 
 
 export default function Home() {
@@ -13,6 +15,8 @@ export default function Home() {
   const handleClose = () => setOpen(false);
   const [itemName, setItemName] = useState()
 
+  
+ 
   const style = {
     position: 'absolute',
     top: '50%',
@@ -24,6 +28,8 @@ export default function Home() {
     boxShadow: 24,
     p: 4,
   };
+
+  
 
   const updatePantry = async () => {
 
@@ -101,6 +107,8 @@ export default function Home() {
               handleClose()
             }
           }>Add</Button>
+         
+          
         </Stack>
         
           </Box>
@@ -114,7 +122,23 @@ export default function Home() {
       <Typography variant={'h2'} color={'#333'} textAlign={'center'}>
         Pantry Items
       </Typography>
+      
     </Box>
+    <Box width="800px" height="75px" bgcolor={'light-gray'} justifyItems={'center'} > 
+      <Autocomplete
+        disablePortal
+        id="combo-box-demo"
+        options={pantry.map(({name, count}) => (
+          name.charAt(0).toUpperCase() + name.slice(1)
+        ))}
+        sx={{ width: 300 }}
+        renderInput={(params) => <TextField {...params} label="Find" InputProps={{
+          ...params.InputProps,
+          type: 'search',
+        }} />}
+    />
+    </Box>
+
       <Stack width="800px" height="300px" spacing={2} overflow={'auto'}>
 
         {pantry.map(({name, count}) => (
@@ -142,9 +166,16 @@ export default function Home() {
               </Typography>
               
             </Box>
-            <Button variant="contained" onClick={() => 
+            <Button variant="contained" sx={{backgroundColor: '#FF3632',
+                                            "&:hover": {backgroundColor: '#FF0000'}}}
+          onClick={() => 
               removeItem(name)
             }>Delete</Button>
+            <Button variant="contained"  sx={{backgroundColor: '#1fd655',
+                                            "&:hover": {backgroundColor: '#00ab41'}
+            }}onClick={() =>
+              addItem(name)}
+            >Add</Button>
    
           </Stack>
         ))}
